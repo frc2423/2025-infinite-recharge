@@ -22,6 +22,7 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import yams.mechanisms.SmartMechanism;
@@ -62,7 +63,7 @@ public class ShooterSubsystem extends SubsystemBase {
   // Create our SmartMotorController from our Spark and config with the NEO.
   private SmartMotorController sparkSmartMotorController = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
 
- private final ShooterConfig shooterConfig = new ShooterConfig(motor)
+ private final ShooterConfig shooterConfig = new ShooterConfig(sparkSmartMotorController)
   // Diameter of the flywheel.
   .withDiameter(Inches.of(4))
   // Mass of the flywheel.
@@ -80,7 +81,8 @@ public class ShooterSubsystem extends SubsystemBase {
    *
    * @return Shooter velocity.
    */
-  public AngularVelocity getVelocity() {return shooter.getSpeed();}
+  public AngularVelocity getRotationVelocity() {return shooter.getSpeed();}
+ 
 
   /**
    * Set the shooter velocity.
@@ -88,7 +90,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * @param speed Speed to set.
    * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
    */
-  public Command setVelocity(AngularVelocity speed) {return shooter.setSpeed(speed);}
+  public Command setRotationVelocity(AngularVelocity rotationSpeed) {return shooter.setSpeed(rotationSpeed);}
 
   /**
    * Set the dutycycle of the shooter.
@@ -98,6 +100,7 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public Command set(double dutyCycle) {return shooter.set(dutyCycle);}
 
+  
   /** Creates a new ExampleSubsystem. */
   public ShooterSubsystem() {}
 
