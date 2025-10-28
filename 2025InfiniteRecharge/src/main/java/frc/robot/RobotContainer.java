@@ -54,7 +54,7 @@ public class RobotContainer {
     // Schedule `setVelocity` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.a().whileTrue(m_shooterSubsystem.setRotationVelocity(RPM.of(60)));
-    m_driverController.b().whileTrue(m_shooterSubsystem.setRotationVelocity(RPM.of(300)));
+    m_driverController.b().whileTrue(m_shooterSubsystem.setRotationVelocity(RPM.of(-60)));
     // Schedule `set` when the Xbox controller's B button is pressed,
     // cancelling on release.
     //m_driverController.x().whileTrue(m_shooterSubsystem.set(0.3));
