@@ -6,9 +6,13 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.ArmSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
+
+import static edu.wpi.first.units.Units.Degrees;
+
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -20,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  private final ArmSubsystem m_exampleSubsystem = new ArmSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -30,6 +34,9 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+
+    // Set the default command to force the arm to go to 0.
+    m_exampleSubsystem.setDefaultCommand(m_exampleSubsystem.setAngle(Degrees.of(0)));
   }
 
   /**
@@ -42,13 +49,26 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
 
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
+    m_exampleSubsystem.getArm().getAngle().lt(Degrees.of(0));
+    
+    var down = Commands.sequence(m_exampleSubsystem.setAngle(Degrees.of(15)).until(() -> m_exampleSubsystem.getArm().getAngle().gt(Degrees.of(14.9))), m_exampleSubsystem.setAngle(Degrees.of(-22)).withTimeout(1.5));
+    // Schedule `setAngle` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    m_driverController.a().whileTrue(down);
+    m_driverController.b().whileTrue(m_exampleSubsystem.setAngle(Degrees.of(15)));
+    // Schedule `set` when the Xbox controller's B button is pressed,
+    // cancelling on release.
+    m_driverController.x().whileTrue(m_exampleSubsystem.set(0.3));
+    m_driverController.y().whileTrue(m_exampleSubsystem.set(-0.3));
+
+
+    Commands.run(() -> {
+      System.out.println("Hello World");
+    }).until(() -> {
+      return true;
+    });
+
   }
 
   /**
@@ -58,6 +78,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    // return Autos.exampleAuto(ArmSubsystem);
+    return null;
   }
 }
