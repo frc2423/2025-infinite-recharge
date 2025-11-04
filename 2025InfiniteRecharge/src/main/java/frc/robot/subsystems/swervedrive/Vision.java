@@ -93,10 +93,10 @@ public class Vision {
    * Constructor for the Vision class.
    *
    * @param currentPose
-   *          Current pose supplier, should reference
-   *          {@link SwerveDrive#getPose()}
+   *                    Current pose supplier, should reference
+   *                    {@link SwerveDrive#getPose()}
    * @param field
-   *          Current field, should be {@link SwerveDrive#field}
+   *                    Current field, should be {@link SwerveDrive#field}
    */
   public Vision(Supplier<Pose2d> currentPose, Field2d field) {
     this.currentPose = currentPose;
@@ -128,11 +128,12 @@ public class Vision {
    * Calculates a target pose relative to an AprilTag on the field.
    *
    * @param aprilTag
-   *          The ID of the AprilTag.
+   *                    The ID of the AprilTag.
    * @param robotOffset
-   *          The offset {@link Transform2d} of the robot to apply to the pose for
-   *          the robot to position
-   *          itself correctly.
+   *                    The offset {@link Transform2d} of the robot to apply to
+   *                    the pose for
+   *                    the robot to position
+   *                    itself correctly.
    * @return The target pose of the AprilTag.
    */
   public static Pose2d getAprilTagPose(int aprilTag, Transform2d robotOffset) {
@@ -153,7 +154,7 @@ public class Vision {
    * given poses.
    *
    * @param swerveDrive
-   *          {@link SwerveDrive} instance.
+   *                    {@link SwerveDrive} instance.
    */
   public void updatePoseEstimation(SwerveDrive swerveDrive, QuackNav quackNav) {
     if (SwerveDriveTelemetry.isSimulation && swerveDrive.getSimulationDriveTrainPose().isPresent()) {
@@ -244,7 +245,7 @@ public class Vision {
    * 10m for a short amount of time.
    *
    * @param pose
-   *          Estimated robot pose.
+   *             Estimated robot pose.
    * @return Could be empty if there isn't a good reading.
    */
   @Deprecated(since = "2024", forRemoval = true)
@@ -299,7 +300,7 @@ public class Vision {
    * Get distance of the robot from the AprilTag pose.
    *
    * @param id
-   *          AprilTag ID
+   *           AprilTag ID
    * @return Distance
    */
   public double getDistanceFromAprilTag(int id) {
@@ -311,9 +312,9 @@ public class Vision {
    * Get tracked target from a camera of AprilTagID
    *
    * @param id
-   *          AprilTag ID
+   *               AprilTag ID
    * @param camera
-   *          Camera to check.
+   *               Camera to check.
    * @return Tracked target.
    */
   public PhotonTrackedTarget getTargetFromId(int id, Cameras camera) {
@@ -448,7 +449,7 @@ public class Vision {
    * @return True when an april tag is discovered.
    */
   public boolean seesFrontAprilTag() {
-    return Cameras.FRONT_RIGHT_CAM.hasTarget() || Cameras.FRONT_LEFT_CAM.hasTarget();
+    return Cameras.FRONT_RIGHT_CAM.hasTarget() || Cameras.OBJECT_CAM.hasTarget();
   }
 
   /**
@@ -466,7 +467,7 @@ public class Vision {
             Units.inchesToMeters(6)), // front floor
         VecBuilder.fill(2, 2, 8), VecBuilder.fill(0.5, 0.5, 1)),
 
-    FRONT_LEFT_CAM("left_cam",
+    OBJECT_CAM("left_cam",
         new Rotation3d(0, Math.toRadians(-20), Math.toRadians(-45)),
         new Translation3d(Units.inchesToMeters(5.707),
             Units.inchesToMeters(9.793),
@@ -528,17 +529,21 @@ public class Vision {
      * estimation noise on an actual robot.
      *
      * @param name
-     *          Name of the PhotonVision camera found in the PV UI.
+     *                              Name of the PhotonVision camera found in the PV
+     *                              UI.
      * @param robotToCamRotation
-     *          {@link Rotation3d} of the camera.
+     *                              {@link Rotation3d} of the camera.
      * @param robotToCamTranslation
-     *          {@link Translation3d} relative to the center of the robot.
+     *                              {@link Translation3d} relative to the center of
+     *                              the robot.
      * @param singleTagStdDevs
-     *          Single AprilTag standard deviations of estimated poses from the
-     *          camera.
+     *                              Single AprilTag standard deviations of estimated
+     *                              poses from the
+     *                              camera.
      * @param multiTagStdDevsMatrix
-     *          Multi AprilTag standard deviations of estimated poses from the
-     *          camera.
+     *                              Multi AprilTag standard deviations of estimated
+     *                              poses from the
+     *                              camera.
      */
     Cameras(String name, Rotation3d robotToCamRotation, Translation3d robotToCamTranslation,
         Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevsMatrix) {
@@ -583,6 +588,10 @@ public class Vision {
       return estimatedRobotPose.get().estimatedPose.getX();
     }
 
+    public PhotonPipelineResult getLatestNoteResult() {
+      return OBJECT_CAM.getLatestResult().get();
+    }
+
     public double getEstPoseY() {
       if (estimatedRobotPose.isEmpty()) {
         return -100000000;
@@ -623,7 +632,7 @@ public class Vision {
      * Add camera to {@link VisionSystemSim} for simulated photon vision.
      *
      * @param systemSim
-     *          {@link VisionSystemSim} to use.
+     *                  {@link VisionSystemSim} to use.
      */
     public void addToVisionSim(VisionSystemSim systemSim) {
       if (Robot.isSimulation()) {
@@ -766,9 +775,9 @@ public class Vision {
      * on number of tags, estimation strategy, and distance from the tags.
      *
      * @param estimatedPose
-     *          The estimated pose to guess standard deviations for.
+     *                      The estimated pose to guess standard deviations for.
      * @param targets
-     *          All targets in this camera frame
+     *                      All targets in this camera frame
      */
 
     private Double getCurrentStdDevsX() {

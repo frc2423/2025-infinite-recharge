@@ -77,7 +77,7 @@ public final class Constants {
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
-    
+
     // Joystick Deadband
     public static final double DEADBAND = 0.1;
     public static final double LEFT_Y_DEADBAND = 0.1;
