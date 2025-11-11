@@ -12,8 +12,12 @@ import static edu.wpi.first.units.Units.RPM;
 
 import java.io.File;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -37,10 +41,17 @@ public class RobotContainer {
   private final CommandXboxController m_driverController = new CommandXboxController(
       OperatorConstants.kDriverControllerPort);
 
+  SendableChooser<String> m_chooser = new SendableChooser<>();      
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
+    SmartDashboard.putData("autoChooser", m_chooser);
+
+    m_chooser.addOption("Taxi Port", "Taxi Port");
+    m_chooser.addOption("Taxi Center", "Taxi Center");
+    
     // Configure the trigger bindings
     configureBindings();
 
@@ -90,11 +101,17 @@ public class RobotContainer {
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return null;
-  }
+      * @param string 
+      *
+      * @return the command to run in autonomous
+      */
+     public Command getAutonomousCommand(String auto) {
+      // An example command will be run in autonomous
+      return swerveSubsystem.getAutonomousCommand(auto);
+     }
+
+    public Command getAutonomousCommand() {
+      // An example command will be run in autonomous
+      return getAutonomousCommand(m_chooser.getSelected());
+    }
 }
