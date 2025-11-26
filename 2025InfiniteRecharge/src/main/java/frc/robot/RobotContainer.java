@@ -32,10 +32,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
   String deployDirectory = (Robot.isSimulation()) ? "sim-swerve/neo" : "swerve";
   public final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(
       new File(Filesystem.getDeployDirectory(), deployDirectory));
+  private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
+  
+  
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController = new CommandXboxController(
@@ -46,11 +48,21 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    
+    Command driveFieldOrientedAngularVelocity = getTeleopDriveCommand();
+    swerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
     SmartDashboard.putData("autoChooser", m_chooser);
 
-    m_chooser.addOption("Taxi Port", "Taxi Port");
-    m_chooser.addOption("Taxi Center", "Taxi Center");
+    m_chooser.addOption("Taxi Port", "Taxi Port Auto");
+    m_chooser.addOption("Taxi Center", "Taxi Center Auto");
+    m_chooser.addOption("Taxi Load", "Taxi Loaf Auto");
+    m_chooser.addOption("Trench Port", "Trench Port Auto");
+    m_chooser.addOption("Preload Center", "Preload Center Auto");
+    m_chooser.addOption("Preload Load", "Preload Load Auto");
+    m_chooser.addOption("Preload Port", "Preload Port Auto");
+    m_chooser.addOption("Rendevous 2 Port", "Rendevous 2 Port Auto");
+    m_chooser.addOption("Rendevous 3 Port", "Rendevous 3 Port Auto");
     
     // Configure the trigger bindings
     configureBindings();
@@ -58,8 +70,8 @@ public class RobotContainer {
     // Set the default command to force the shooter rest.
     m_shooterSubsystem.setDefaultCommand(m_shooterSubsystem.set(0));
 
-    Command driveFieldOrientedAngularVelocity = getTeleopDriveCommand();
-    swerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
+    
+    
   }
 
   private Command getTeleopDriveCommand() {
