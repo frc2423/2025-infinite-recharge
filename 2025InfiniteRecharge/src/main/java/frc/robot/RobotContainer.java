@@ -54,8 +54,15 @@ public class RobotContainer {
 
     SmartDashboard.putData("autoChooser", m_chooser);
 
-    m_chooser.addOption("Taxi Port", "Taxi Port");
-    m_chooser.addOption("Taxi Center", "Taxi Center");
+    m_chooser.addOption("Taxi Port", "Taxi Port Auto");
+    m_chooser.addOption("Taxi Center", "Taxi Center Auto");
+    m_chooser.addOption("Taxi Load", "Taxi Loaf Auto");
+    m_chooser.addOption("Trench Port", "Trench Port Auto");
+    m_chooser.addOption("Preload Center", "Preload Center Auto");
+    m_chooser.addOption("Preload Load", "Preload Load Auto");
+    m_chooser.addOption("Preload Port", "Preload Port Auto");
+    m_chooser.addOption("Rendevous 2 Port", "Rendevous 2 Port Auto");
+    m_chooser.addOption("Rendevous 3 Port", "Rendevous 3 Port Auto");
     
     // Configure the trigger bindings
     configureBindings();
