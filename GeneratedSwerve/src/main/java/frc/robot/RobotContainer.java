@@ -86,16 +86,16 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         joystick.rightBumper()
-                .whileTrue(goToPose(new Pose2d(new Translation2d(1.1, 1.81), new Rotation2d(-3.09, -176.95)))); // Pass
-                                                                                                                // in a
-                                                                                                                // pose2d
-                                                                                                                // to
-                                                                                                                // move
-                                                                                                                // to
-                                                                                                                // location
-                                                                                                                // on
-                                                                                                                // rightbumber
-                                                                                                                // hold
+                .whileTrue(goToPose(new Pose2d(new Translation2d(0, 0), new Rotation2d(-0, 0)))); // Pass
+                                                                                                  // in a
+                                                                                                  // pose2d
+                                                                                                  // to
+                                                                                                  // move
+                                                                                                  // to
+                                                                                                  // location
+                                                                                                  // on
+                                                                                                  // rightbumber
+                                                                                                  // hold
 
     }
 
