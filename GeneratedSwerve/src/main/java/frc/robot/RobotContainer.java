@@ -86,16 +86,16 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         joystick.rightBumper()
-                .whileTrue(goToPose(new Pose2d(new Translation2d(1.1, 6.8), new Rotation2d(-3.09, -176.95)))); // Pass
-                                                                                                               // in a
-                                                                                                               // pose2d
-                                                                                                               // to
-                                                                                                               // move
-                                                                                                               // to
-                                                                                                               // location
-                                                                                                               // on
-                                                                                                               // rightbumber
-                                                                                                               // hold
+                .whileTrue(goToPose(new Pose2d(new Translation2d(1.1, 1.81), new Rotation2d(-3.09, -176.95)))); // Pass
+                                                                                                                // in a
+                                                                                                                // pose2d
+                                                                                                                // to
+                                                                                                                // move
+                                                                                                                // to
+                                                                                                                // location
+                                                                                                                // on
+                                                                                                                // rightbumber
+                                                                                                                // hold
 
     }
 
@@ -108,7 +108,6 @@ public class RobotContainer {
         Command moveAndSlide = drivetrain.applyRequest(() -> { // godot reference 🤣, 😜, 🤔, and 🤡
 
             var whereami = drivetrain.getState().Pose; // Get pose
-            System.out.println(whereami);
 
             double starting_x = whereami.getX();
             double starting_y = whereami.getY();
@@ -120,13 +119,23 @@ public class RobotContainer {
 
             double d = Math.sqrt((x * x) + (y * y));
 
-            double x_norm = x / d;
-            double y_norm = y / d;
+            double x_norm;
+            double y_norm;
 
-            double speed_coefficent = 1.1415926535897932384626433832795028841 + 2 * d;
+            if (d > 0.001) {
+                x_norm = x / d;
+                y_norm = y / d;
+            } else {
+                x_norm = 0.00;
+                y_norm = 0.00;
+            }
+            ;
 
+            double speed_coefficent = Math.min(.3 + 2 * d, 1);
+            System.out.println(
+                    "X norm: " + x_norm + "Y norm: " + y_norm + ", speed: " + speed_coefficent + ", distance: " + d);
             return drive.withVelocityX(speed_coefficent * -x_norm)
-                    .withVelocityY(speed_coefficent * -y_norm);
+                    .withVelocityY(speed_coefficent * -y_norm).withDeadband(0);
         });
 
         return moveAndSlide;
