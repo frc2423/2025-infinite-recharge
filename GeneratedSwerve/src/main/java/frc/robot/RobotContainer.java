@@ -8,6 +8,8 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.lang.annotation.Target;
+
 import javax.xml.xpath.XPathFactory;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -82,41 +84,52 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+
+        joystick.rightBumper()
+                .whileTrue(goToPose(new Pose2d(new Translation2d(1.1, 6.8), new Rotation2d(-3.09, -176.95)))); // Pass
+                                                                                                               // in a
+                                                                                                               // pose2d
+                                                                                                               // to
+                                                                                                               // move
+                                                                                                               // to
+                                                                                                               // location
+                                                                                                               // on
+                                                                                                               // rightbumber
+                                                                                                               // hold
+
     }
 
     public Command getAutonomousCommand() {
         return Commands.print("No autonomous command configured");
     }
 
-    public Command goToPose() {
-        var whereami = drivetrain.getState().Pose; // Get pose
-        System.out.println(whereami);
+    public Command goToPose(Pose2d target) {
 
-        var target = new Pose2d(new Translation2d(10.98, 5.51), new Rotation2d(-3.09, -176.95));
-        double x0 = whereami.getX();
-        double y0 = whereami.getY();
-        double xf = target.getX();
-        double yf = target.getY();
+        Command moveAndSlide = drivetrain.applyRequest(() -> { // godot reference 🤣, 😜, 🤔, and 🤡
 
-        double deltax = xf - x0;
-        double deltay = yf - y0;
+            var whereami = drivetrain.getState().Pose; // Get pose
+            System.out.println(whereami);
 
-        double d = Math.sqrt((deltax * deltax) + (deltay * deltay));
+            double starting_x = whereami.getX();
+            double starting_y = whereami.getY();
+            double target_x = target.getX();
+            double target_y = target.getY();
 
-        double deltax_norm = deltax / d;
-        double deltay_norm = deltay / d;
+            double x = target_x - starting_x;
+            double y = target_y - starting_y;
 
-        Command someCommand = drivetrain.applyRequest(() -> {
+            double d = Math.sqrt((x * x) + (y * y));
 
-            double xSpeed = -joystick.getLeftY() * MaxSpeed;
-            double ySpeed = -joystick.getLeftY() * MaxSpeed;
+            double x_norm = x / d;
+            double y_norm = y / d;
 
-            return drive.withVelocityX(xSpeed * MaxSpeed)
-                    .withVelocityY(ySpeed * MaxSpeed)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate);
+            double speed_coefficent = 1.1415926535897932384626433832795028841 + 2 * d;
+
+            return drive.withVelocityX(speed_coefficent * -x_norm)
+                    .withVelocityY(speed_coefficent * -y_norm);
         });
 
-        return someCommand;
+        return moveAndSlide;
     }
 
 }
