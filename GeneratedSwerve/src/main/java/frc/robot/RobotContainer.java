@@ -64,7 +64,8 @@ public class RobotContainer {
 
         driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
         driver.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))
+            // point.withModuleDirection(new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))
+            point.withModuleDirection(new Rotation2d(0))
         ));
 
         // Run SysId routines when holding back/start and X/Y.
