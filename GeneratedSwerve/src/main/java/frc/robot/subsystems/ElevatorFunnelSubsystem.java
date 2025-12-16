@@ -30,12 +30,18 @@ public class ElevatorFunnelSubsystem extends SubsystemBase {
         intakeDist = Robot.isSimulation() ? new MockLaserCan() : new LaserCan(26);
     }
 
+    public boolean seesBall() {
+        return intakeDist.getMeasurement().distance_mm < 250;
+    }
+
     public Command elevatorFunnelIn() {
         var command = run(()->elevatorFunnelSubsystem.set(0.5));
         command.setName("Elevator Funnel In");
 
         return command;
     }
+
+    
 
     public Command elevatorFunnelStop() {
         var command = runOnce(()->elevatorFunnelSubsystem.set(0));
