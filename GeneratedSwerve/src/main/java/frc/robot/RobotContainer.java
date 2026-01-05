@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.io.PrintStream;
 import java.lang.annotation.Target;
 
 import javax.xml.xpath.XPathFactory;
@@ -94,7 +95,7 @@ public class RobotContainer {
                                                                                                   // to
                                                                                                   // location
                                                                                                   // on
-                                                                                                  // rightbumber
+                                                                                                  // rightbumper
                                                                                                   // hold
 
     }
@@ -111,11 +112,14 @@ public class RobotContainer {
 
             double starting_x = whereami.getX();
             double starting_y = whereami.getY();
+            Rotation2d starting_r = whereami.getRotation();
             double target_x = target.getX();
             double target_y = target.getY();
+            Rotation2d target_r = target.getRotation();
 
             double x = target_x - starting_x;
             double y = target_y - starting_y;
+            double r = target_r.minus(starting_r).getRadians();
 
             double d = Math.sqrt((x * x) + (y * y));
 
@@ -130,12 +134,25 @@ public class RobotContainer {
                 y_norm = 0.00;
             }
             ;
+            // System.out.println(r);
+
+            double rotation = 0;
+
+            if (r < 0.03 && r > -0.03) {
+                rotation = 0;
+            } else {
+                rotation = r * 3 + Math.copySign(.475, r);
+            }
+
+            // Please stop
 
             double speed_coefficent = Math.min(.3 + 2 * d, 1);
-            System.out.println(
-                    "X norm: " + x_norm + "Y norm: " + y_norm + ", speed: " + speed_coefficent + ", distance: " + d);
+            // System.out.println(
+            // "X norm: " + x_norm + "Y norm: " + y_norm + ", speed: " + speed_coefficent +
+            // ", distance: " + d);
             return drive.withVelocityX(speed_coefficent * -x_norm)
-                    .withVelocityY(speed_coefficent * -y_norm).withDeadband(0);
+                    .withVelocityY(speed_coefficent * -y_norm).withDeadband(0)
+                    .withRotationalRate(rotation).withRotationalDeadband(0);
         });
 
         return moveAndSlide;
