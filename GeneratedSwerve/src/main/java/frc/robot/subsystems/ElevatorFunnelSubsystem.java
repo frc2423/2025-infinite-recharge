@@ -19,11 +19,14 @@ import com.revrobotics.spark.SparkMax;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.simulation.MockLaserCan;
 import au.grapplerobotics.interfaces.LaserCanInterface;
+import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
 
 public class ElevatorFunnelSubsystem extends SubsystemBase {
 
-    private SparkFlex elevatorFunnelSubsystem = new SparkFlex(22, MotorType.kBrushless);
+    private SparkMax elevatorFunnelSubsystem = new SparkMax(22, MotorType.kBrushless);
     private final LaserCanInterface intakeDist;
+
+    private double speed = 0;
 
     public ElevatorFunnelSubsystem() {
         setDefaultCommand(elevatorFunnelStop());
@@ -31,11 +34,21 @@ public class ElevatorFunnelSubsystem extends SubsystemBase {
     }
 
     public boolean seesBall() {
-        return intakeDist.getMeasurement().distance_mm < 250;
+        Measurement measurement = intakeDist.getMeasurement();
+        if (measurement == null) {
+            return false;
+        }
+        return measurement.distance_mm < 250;
+    }
+
+    public void periodic() {
+        elevatorFunnelSubsystem.set(speed);
     }
 
     public Command elevatorFunnelIn() {
-        var command = run(()->elevatorFunnelSubsystem.set(0.5));
+        var command = run(()-> {
+            speed = -.5;
+        });
         command.setName("Elevator Funnel In");
 
         return command;
@@ -44,14 +57,18 @@ public class ElevatorFunnelSubsystem extends SubsystemBase {
     
 
     public Command elevatorFunnelStop() {
-        var command = runOnce(()->elevatorFunnelSubsystem.set(0));
+        var command = runOnce(()-> {
+            speed = 0;
+        });
         command.setName("Intake Stop");
 
         return command;
     }
 
     public Command elevatorFunnelStopIfBroken() {
-        var command = runOnce(()->elevatorFunnelSubsystem.set(0));
+        var command = runOnce(()-> {
+            speed = 0;
+        });
         command.setName("Intake Stop If Broken");
 
         return command;
