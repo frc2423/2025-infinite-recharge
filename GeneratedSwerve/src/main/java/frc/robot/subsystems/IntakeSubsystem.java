@@ -11,6 +11,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
@@ -24,9 +25,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private SparkFlex intake = new SparkFlex(18, MotorType.kBrushless);
     SparkFlexConfig motorConfig = new SparkFlexConfig();
+    MedianFilter intakeMedianFilter = new MedianFilter(100);
+    
 
     public IntakeSubsystem() {
-        setCurrentLimit(60, 40);
+        setCurrentLimit(80, 50);
         setDefaultCommand(intakeStop());
     }
 
@@ -39,7 +42,7 @@ public class IntakeSubsystem extends SubsystemBase {
         var command = runOnce(() -> intake.set(0.5));
         command.setName("nothing wrong");
 
-        if (intake.getOutputCurrent() > 55 /* && intake.get() <= 0.2 */) {
+        if (intake.getOutputCurrent() > 90 /* && intake.get() <= 0.2 */) {
             var trueCommand = run(() -> intake.set(-0.5));
             trueCommand.setName("Intake Out");
             return trueCommand;
@@ -48,13 +51,21 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public Command intakeIn() {
-        var command = run(() -> intake.set(0.5)).until(() -> {
-            if (intake.getOutputCurrent() > 55 /* && intake.get() <= 0.2 */) {
+    
+        var command = runOnce(() -> {
+            intakeMedianFilter.reset();
+            for (int i = 0; i < 100; i++) {
+                intakeMedianFilter.calculate(0);
+            }
+        }).andThen(run(() -> intake.set(0.5)).until(() -> {
+            if (intakeMedianFilter.calculate(intake.getOutputCurrent()) > 55) {
                 return true;
             }
+            // if (intake.getOutputCurrent() > 55 /* && intake.get() <= 0.2 */) {
+            // return true;
+            // }
             return false;
-        }).andThen(run(() -> intake.set(-0.5)));
-
+        }).andThen(run(() -> intake.set(-0.5))));
         command.setName("Intake In");
 
         // if (intake.getOutputCurrent() > 0.2 && intake.get() <= 0.2) {
