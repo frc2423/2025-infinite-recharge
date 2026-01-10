@@ -1,26 +1,17 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Pounds;
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Seconds;
-
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
-import yams.motorcontrollers.simulation.Sensor;
-
-import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkMax;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.simulation.MockLaserCan;
 import au.grapplerobotics.interfaces.LaserCanInterface;
 import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
 
+@Logged
 public class ElevatorFunnelSubsystem extends SubsystemBase {
 
     private SparkMax elevatorFunnelSubsystem = new SparkMax(22, MotorType.kBrushless);
@@ -54,7 +45,14 @@ public class ElevatorFunnelSubsystem extends SubsystemBase {
         return command;
     }
 
-    
+    public Command elevatorShooterIn() {
+        var command = run(()-> {
+            speed = -1;
+        });
+        command.setName("Elevator Funnel In");
+
+        return command;
+    }
 
     public Command elevatorFunnelStop() {
         var command = runOnce(()-> {

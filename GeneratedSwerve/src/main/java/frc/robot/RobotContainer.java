@@ -9,7 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -25,6 +25,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FunnelingSubsystem;
 
+@Logged
 public class RobotContainer {
 
         private final FunnelingSubsystem funneling = new FunnelingSubsystem();
@@ -115,7 +116,7 @@ public class RobotContainer {
                 driver.button(10).whileTrue(intake.intakeOut()).onFalse(intake.intakeStop());
 
                 driver.leftTrigger()
-                                .whileTrue(Commands.parallel(shooter.shooterFast(), elevatorFunnel.elevatorFunnelIn()))
+                                .whileTrue(Commands.sequence(shooter.shooterFast().withTimeout(2),Commands.parallel(shooter.shooterFast(), elevatorFunnel.elevatorShooterIn())))
                                 .onFalse(shooter.shooterStop().andThen(elevatorFunnel.elevatorFunnelStop()));
                 driver.rightTrigger()
                                 .whileTrue(Commands.parallel(shooter.shooterSlow(), elevatorFunnel.elevatorFunnelIn()))

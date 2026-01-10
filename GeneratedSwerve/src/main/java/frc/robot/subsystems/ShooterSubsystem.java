@@ -1,20 +1,12 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Pounds;
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Seconds;
-
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkMax;
 
+@Logged
 public class ShooterSubsystem extends SubsystemBase {
     
     private SparkFlex shooter = new SparkFlex(23, MotorType.kBrushless);
